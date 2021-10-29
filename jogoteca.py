@@ -14,8 +14,8 @@ jogo2 = Jogo('Resident Evil','Terror','PS2')
 jogo3 = Jogo('GTA','Ação','PS2')
 lista = [jogo1, jogo2, jogo3]
 
-@app.route('/inicio')
-def ola():
+@app.route('/')
+def index():
     return render_template('lista.html', cabecario='JOGO BRABO', titulo='JOGO BRABO', jogos=lista)
 
 @app.route('/novo')
@@ -31,4 +31,4 @@ def criar():
     lista.append(jogo)
     return render_template('lista.html', cabecario='JOGO BRABO', titulo='JOGO BRABO', jogos=lista)
 
-app.run()
+app.run(debug=True, use_reloader=True)
