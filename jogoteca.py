@@ -1,7 +1,8 @@
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, session, flash
 from flask.templating import render_template
 
 app = Flask(__name__)
+app.secret_key = 'Alura'
 
 class Jogo():
     def __init__(self, nome, categoria, console):
@@ -20,7 +21,10 @@ def index():
 
 @app.route('/novo')
 def novo():
-    return render_template('novo.html', cabecario='JOGO BRABO', titulo='NOVO JOGO')
+    if ('usuario_logado' not in session or session['usuario_logado'] == None):
+        return redirect('/login')
+    else:
+        return render_template('novo.html', cabecario='JOGO BRABO', titulo='NOVO JOGO')
 
 @app.route('/criar', methods=['POST',])
 def criar():
@@ -31,4 +35,24 @@ def criar():
     lista.append(jogo)
     return redirect('/')
 
-app.run(debug=True, use_reloader=True)
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/autenticar', methods=['POST'])
+def autenticar():
+    if('mestra' == request.form['senha']):
+        session['usuario_logado'] = request.form['usuario']
+        flash(request.form['usuario'] + ' logou com sucesso!')
+        return redirect('/')
+    else:
+        flash(' Senha/usuário não identificado, tente novamente.')
+        return redirect('/login')
+
+@app.route('/logout')
+def logout():
+    session['usuario_logado'] = None
+    flash('Usuário deslogado!')
+    return redirect('/')
+
+app.run(debug=True)
